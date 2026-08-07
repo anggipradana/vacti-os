@@ -1,0 +1,21 @@
+{
+  "name": "@vacti/core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/core/src",
+  "tags": ["lang:ts", "scope:lib"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": { "command": "tsc -p libs/core/tsconfig.json" }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": { "command": "eslint libs/core/src" }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": { "command": "vitest run --root libs/core" }
+    }
+  }
+}

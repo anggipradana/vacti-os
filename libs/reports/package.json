@@ -1,0 +1,11 @@
+{
+  "name": "@vacti/reports",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}

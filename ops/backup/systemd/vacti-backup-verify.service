@@ -1,0 +1,14 @@
+[Unit]
+Description=vacti weekly deep backup verification (restic check --read-data)
+After=docker.service network-online.target
+Wants=network-online.target
+OnFailure=vacti-backup-alert.service
+
+[Service]
+Type=oneshot
+# Full re-read of all pack files so bit-rot in the bucket is caught. --verify runs restic check.
+ExecStart=/opt/vacti-backup/restore.sh --verify
+Nice=15
+IOSchedulingClass=idle
+StandardOutput=append:/var/log/vacti-backup.log
+StandardError=append:/var/log/vacti-backup.log

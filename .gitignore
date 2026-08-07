@@ -1,0 +1,44 @@
+# deps & build
+node_modules/
+dist/
+.next/
+out/
+.nx/
+coverage/
+playwright-report/
+test-results/
+
+# env - only .env.example may be committed
+.env
+.env.*
+!.env.example
+
+# os/editor
+.DS_Store
+*.log
+tmp/
+
+# TS incremental build info
+*.tsbuildinfo
+/.scratch/
+
+# scratch space for extra git worktrees and local throwaway files (keep the directories,
+# ignore everything an agent or developer drops inside them)
+worktrees/*
+!worktrees/.gitkeep
+local-temp/*
+!local-temp/.gitkeep
+
+# Playwright auth storage state (contains a session cookie)
+apps/web/e2e/.auth/
+.deploy/
+.next-e2e/
+.next-prod/
+.next-build/
+.data/
+
+# Backup credentials + staging must never be committed (the real env lives at /etc/vacti/backup.env).
+ops/backup/backup.env
+ops/backup/*.env
+!ops/backup/backup.env.example
+ops/backup/stage/

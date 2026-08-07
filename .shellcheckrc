@@ -1,0 +1,11 @@
+# shellcheck configuration for this repo's shell scripts: scripts/*.sh and .husky/*.
+# Every one of those already passes a plain `shellcheck` run (default check set, no
+# `--enable=all`) - this file intentionally does not raise the floor to that stricter optional
+# level, since it surfaces pure style nits (SC2250 brace-every-variable, SC2292 prefer `[[ ]]`)
+# across scripts that are otherwise correct and were written to POSIX `sh`, not bash, on purpose.
+# It pins the one setting worth being explicit about so behavior doesn't drift with future
+# shellcheck versions or unrelated CI environments.
+
+# This repo's scripts never `source`/`.` another file, so an unresolvable dynamic source path
+# should be flagged (SC1090/SC1091), not silently accepted.
+external-sources=false

@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the vacti backup daily at 03:15 Asia/Jakarta
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 Asia/Jakarta
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

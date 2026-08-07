@@ -1,0 +1,29 @@
+# yamllint configuration for this repo's two hand-authored YAML files (repo-config.yml,
+# docker-compose.yml). Extends the default rule set with three overrides that match this repo's
+# actual style rather than yamllint's 80-column-terminal defaults, plus an ignore list so
+# yamllint never descends into vendored or generated trees (its default ignore list is empty).
+extends: default
+
+ignore: |
+  node_modules/
+  dist/
+  .next/
+  .nx/
+  coverage/
+  target/
+  **/target/
+  worktrees/
+  local-temp/
+
+rules:
+  # Prettier's printWidth (see .prettierrc / package.json "format") is 120 for every other file
+  # in this repo; match it here instead of yamllint's 80-column default.
+  line-length:
+    max: 120
+  # Neither repo-config.yml nor docker-compose.yml opens with a `---` document marker, and there
+  # is no reason to require one for a single-document file.
+  document-start: disable
+  # A single space before an inline comment (repo-config.yml's existing style) is fine; only
+  # flag a genuinely missing space.
+  comments:
+    min-spaces-from-content: 1

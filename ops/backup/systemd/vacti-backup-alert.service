@@ -1,0 +1,6 @@
+[Unit]
+Description=vacti backup failure alert (fired via OnFailure=)
+
+[Service]
+Type=oneshot
+ExecStart=/opt/vacti-backup/alert.sh vacti-backup

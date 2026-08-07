@@ -1,0 +1,16 @@
+{
+  "name": "@vacti/recon",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/recon/src",
+  "tags": ["lang:ts", "scope:lib"],
+  "targets": {
+    "typecheck": { "executor": "nx:run-commands", "options": { "command": "tsc -p libs/recon/tsconfig.json" } },
+    "lint": { "executor": "nx:run-commands", "options": { "command": "eslint libs/recon/src" } },
+    "test:quick": { "executor": "nx:run-commands", "options": { "command": "vitest run --root libs/recon" } },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": { "command": "vitest run --config libs/recon/vitest.integration.config.ts" }
+    }
+  }
+}

@@ -1,0 +1,7 @@
+# restic --exclude-file for the vacti nightly backup.
+# The .data bind mounts should hold only durable state, but be defensive about junk.
+*.tmp
+*.part
+*/cache/*
+*/.cache/*
+*/node_modules/*

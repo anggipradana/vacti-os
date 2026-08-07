@@ -1,0 +1,80 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vacti
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vacti}
+      POSTGRES_DB: vacti
+    volumes:
+      - vacti-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U vacti']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      # Loopback only: app/worker reach the db over the compose network; this host mapping exists
+      # solely for local tooling (drizzle-kit migrate, psql) and must not be reachable externally.
+      - '127.0.0.1:5432:5432'
+
+  # Recon worker: self-contained image (pinned subfinder/httpx/naabu/nuclei + nuclei-templates +
+  # Chromium). Runs DB migrations on boot, then consumes the pg-boss queue (scans / TI / schedules /
+  # daily news). Auto-restart pairs with the worker's startup reaper + live watchdog.
+  worker:
+    build:
+      context: .
+      target: worker
+    restart: unless-stopped
+    command: ['npx', 'tsx', 'apps/worker/src/main.ts']
+    environment:
+      DATABASE_URL: postgres://vacti:${POSTGRES_PASSWORD:-vacti}@db:5432/vacti
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      NODE_ENV: production
+      # Scan schedules are evaluated in this timezone (cron + time pickers in the UI).
+      TZ: ${SCHEDULE_TZ:-Asia/Jakarta}
+      # Optional integrations (features degrade gracefully when unset).
+      OTX_API_KEY: ${OTX_API_KEY:-}
+      LEAKCHECK_API_KEY: ${LEAKCHECK_API_KEY:-}
+      VT_API_KEY: ${VT_API_KEY:-}
+      URLSCAN_API_KEY: ${URLSCAN_API_KEY:-}
+      PROXY_URL: ${PROXY_URL:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
+      NEWS_RETENTION_DAYS: ${NEWS_RETENTION_DAYS:-90}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: runtime
+    restart: unless-stopped
+    # keepAliveTimeout > client/proxy idle so the server never closes a connection the browser is about
+    # to reuse for a POST (server action). A reused-then-reset keep-alive connection fails a POST with
+    # net::ERR_ABORTED (browsers retry idempotent GETs but never POSTs), which hangs form spinners.
+    command: ['npx', 'next', 'start', 'apps/web', '-p', '3000', '--keepAliveTimeout', '70000']
+    environment:
+      DATABASE_URL: postgres://vacti:${POSTGRES_PASSWORD:-vacti}@db:5432/vacti
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      NODE_ENV: production
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      OTX_API_KEY: ${OTX_API_KEY:-}
+      LEAKCHECK_API_KEY: ${LEAKCHECK_API_KEY:-}
+      VT_API_KEY: ${VT_API_KEY:-}
+      URLSCAN_API_KEY: ${URLSCAN_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
+    depends_on:
+      db:
+        condition: service_healthy
+      worker:
+        condition: service_started
+    # Host :3100 → container :3000 so an external proxy (e.g. cloudflared) keeps pointing at :3100.
+    ports:
+      - '3100:3000'
+
+volumes:
+  vacti-pg: {}

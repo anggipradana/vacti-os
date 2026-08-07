@@ -1,0 +1,11 @@
+[Unit]
+Description=vacti backup dead-man check (alerts if the newest snapshot is stale)
+After=network-online.target
+Wants=network-online.target
+OnFailure=vacti-backup-alert.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/vacti-backup/deadman.sh
+StandardOutput=append:/var/log/vacti-backup.log
+StandardError=append:/var/log/vacti-backup.log

@@ -1,0 +1,20 @@
+# hadolint configuration for the root Dockerfile.
+#
+# Every ignored rule below is a deliberate choice already documented in the Dockerfile's own
+# comments, not an oversight - each corresponds to a real hadolint finding verified against the
+# current Dockerfile before this file was added.
+ignored:
+  # Multiple consecutive RUN instructions (build stage: `npm ci` then `npx next build`) are
+  # intentional separate layers, not an omission - splitting the dependency-install layer from
+  # the build layer lets Docker cache the (slow) install step independently of app source
+  # changes.
+  - DL3059
+  # Unpinned apt-get packages in the worker stage (ca-certificates, curl, unzip, libpcap0.8) are
+  # intentional: they track Debian bookworm's rolling security patches for base packages, and
+  # pinning them would break the build the moment Debian rotates an old version out of the
+  # archive.
+  - DL3008
+  # `cd /tmp` inside the worker stage's tool-fetch RUN is scratch space for downloading the
+  # pinned ProjectDiscovery release zips, not a persistent working-directory change - the
+  # stage's real WORKDIR (/app) is untouched by it.
+  - DL3003

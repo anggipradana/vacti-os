@@ -1,0 +1,13 @@
+{
+  "name": "@vacti/worker",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/worker/src",
+  "tags": ["lang:ts", "scope:worker"],
+  "targets": {
+    "typecheck": { "executor": "nx:run-commands", "options": { "command": "tsc -p apps/worker/tsconfig.json" } },
+    "lint": { "executor": "nx:run-commands", "options": { "command": "eslint apps/worker/src" } },
+    "serve": { "executor": "nx:run-commands", "options": { "command": "tsx watch apps/worker/src/main.ts" } },
+    "start": { "executor": "nx:run-commands", "options": { "command": "tsx apps/worker/src/main.ts" } }
+  }
+}

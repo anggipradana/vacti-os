@@ -1,0 +1,10 @@
+[Unit]
+Description=Run the vacti deep backup verification weekly (Sunday 04:30 Asia/Jakarta)
+
+[Timer]
+OnCalendar=Sun *-*-* 04:30:00 Asia/Jakarta
+Persistent=true
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.625rem;
+
+    /* Light theme keeps its original neutral white background; brand colour is applied via the
+       accent tokens only (the navy/blue palette lives in the dark theme). */
+    --bg: 0 0% 100%;
+    --surface: 0 0% 100%;
+    --surface-2: 210 20% 98%;
+    --surface-3: 214 20% 94%;
+    --border: 214 20% 91%;
+    --border-strong: 214 16% 83%;
+    --fg: 222 47% 11%;
+    --fg-muted: 215 16% 42%;
+    --fg-subtle: 215 14% 60%;
+
+    --accent: 217 78% 50%; /* #1e66e3 primary blue */
+    --accent-hover: 218 74% 48%; /* #1f5bd6 */
+    --accent-fg: 0 0% 100%;
+    --ring: 217 78% 50%;
+
+    --sev-critical: 0 100% 68%; /* #ff5a5a */
+    --sev-high: 21 90% 48%;
+    --sev-medium: 32 94% 36%;
+    --sev-low: 41 96% 33%;
+    --sev-info: 203 100% 61%; /* #37b6ff cyan */
+
+    --risk-green: 152 55% 36%;
+    --risk-amber: 32 94% 44%;
+    --risk-red: 0 100% 68%;
+
+    --success: 152 55% 36%;
+    --danger: 0 100% 68%;
+  }
+
+  .dark {
+    /* VACTI navy dark theme */
+    --bg: 217 67% 9%; /* #081428 deeper */
+    --surface: 215 66% 12%; /* #0a1b33 base navy */
+    --surface-2: 215 67% 19%; /* #10294f */
+    --surface-3: 214 63% 23%; /* #16345f */
+    --border: 214 55% 22%;
+    --border-strong: 214 48% 32%;
+    --fg: 213 88% 97%; /* #f1f6fe */
+    --fg-muted: 217 28% 67%; /* #94a6c2 */
+    --fg-subtle: 217 22% 54%; /* #6e84a8 */
+
+    --accent: 203 100% 61%; /* #37b6ff cyan highlight */
+    --accent-hover: 203 100% 78%; /* #8fd4ff light cyan */
+    --accent-fg: 215 66% 12%; /* navy */
+    --ring: 203 100% 61%;
+
+    --sev-critical: 0 100% 71%;
+    --sev-high: 27 96% 61%;
+    --sev-medium: 43 96% 56%;
+    --sev-low: 48 96% 53%;
+    --sev-info: 203 100% 61%;
+
+    --risk-green: 152 50% 55%;
+    --risk-amber: 43 96% 56%;
+    --risk-red: 0 100% 71%;
+
+    --success: 152 50% 55%;
+    --danger: 0 100% 71%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    background-color: hsl(var(--bg));
+    color: hsl(var(--fg));
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    letter-spacing: -0.02em;
+  }
+  ::selection {
+    background-color: hsl(var(--accent) / 0.18);
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border-strong)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--border-strong));
+    border-radius: 9999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Loading skeleton that only becomes visible if navigation takes >200ms, so fast page loads
+   (the common case) never flash an empty skeleton - feedback for slow loads only. */
+@keyframes vactiDelayedAppear {
+  to {
+    opacity: 1;
+  }
+}
+.delayed-appear {
+  opacity: 0;
+  animation: vactiDelayedAppear 0.15s ease-out 0.2s forwards;
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=vacti nightly offsite backup (restic -> B2/S3/R2)
+After=docker.service network-online.target
+Wants=network-online.target
+OnFailure=vacti-backup-alert.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/vacti-backup/backup.sh
+Nice=10
+IOSchedulingClass=idle
+# backup.sh also logs to stdout; systemd captures it to the journal + the append file below.
+StandardOutput=append:/var/log/vacti-backup.log
+StandardError=append:/var/log/vacti-backup.log

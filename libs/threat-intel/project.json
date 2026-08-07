@@ -1,0 +1,33 @@
+{
+  "name": "@vacti/threat-intel",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/threat-intel/src",
+  "tags": ["lang:ts", "scope:lib"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc -p libs/threat-intel/tsconfig.json"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "eslint libs/threat-intel/src"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest run --root libs/threat-intel"
+      }
+    },
+    "test:integration": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest run --config libs/threat-intel/vitest.integration.config.ts"
+      }
+    }
+  }
+}

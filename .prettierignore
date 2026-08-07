@@ -1,0 +1,11 @@
+node_modules
+dist
+.next
+out
+.nx
+coverage
+playwright-report
+test-results
+drizzle/**/*.sql
+pnpm-lock.yaml
+package-lock.json
