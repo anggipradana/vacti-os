@@ -1,6 +1,6 @@
 /**
  * Exposure / secret detection - regex ruleset run over discovered URL strings and (optionally)
- * fetched response bodies. Ported & adapted from the SCOPTIX methodology (Apache-2.0): keyword
+ * fetched response bodies. Ported & adapted from an established passive-recon methodology: keyword
  * prefilter for speed, priority ordering so specific rules claim overlaps before generic ones.
  * Pure function, no I/O - safe to run over large URL batches.
  */

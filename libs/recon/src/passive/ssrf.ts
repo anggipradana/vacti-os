@@ -3,7 +3,7 @@ import dns from 'node:dns/promises';
 
 /**
  * SSRF guard for deep-fetch: only http(s), and never internal/cloud-metadata/private targets.
- * Ported from the SCOPTIX guard (Apache-2.0). Deep-fetch MUST pass this before any outbound request:
+ * Ported from a standard SSRF guard. Deep-fetch MUST pass this before any outbound request:
  * the synchronous check for the URL literal, plus assertHostResolvesPublic for DNS names (a target
  * subdomain's A record can point at an internal address).
  */

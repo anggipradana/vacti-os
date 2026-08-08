@@ -74,7 +74,7 @@ subfinder (opsional, skip bila predefined subs)
   initiate_scans, modify_targets (auditor = read + report saja).
 - **Realtime**: progres scan via SSE/WebSocket.
 
-### 7. Passive Recon & Exposure Discovery (➕ baru - studi SCOPTIX)
+### 7. Passive Recon & Exposure Discovery (➕ baru - studi referensi passive-recon)
 
 Sumber OSINT **pasif** (HTTP API, bukan scanner aktif/biner) yang memperkaya attack surface VA dan
 sebagian CTI. Detail penuh: [11-PASSIVE-RECON-AND-EXPOSURE.md](11-PASSIVE-RECON-AND-EXPOSURE.md).

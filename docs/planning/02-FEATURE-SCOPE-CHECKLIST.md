@@ -134,14 +134,14 @@
 
 ---
 
-## 9. Passive Recon & Exposure (➕ baru - studi SCOPTIX, 2026-06-06)
+## 9. Passive Recon & Exposure (➕ baru - studi referensi passive-recon, 2026-06-06)
 
-Sumber: **Omnitarium/scoptix** (Apache-2.0). Semua engine = OSINT **pasif** (HTTP API), bukan
+Sumber: **an OSINT reference design**. Semua engine = OSINT **pasif** (HTTP API), bukan
 scanner aktif → tidak menambah biner & tidak melanggar set tool aktif. Spec penuh:
 [11-PASSIVE-RECON-AND-EXPOSURE.md](11-PASSIVE-RECON-AND-EXPOSURE.md). Status: sebagian besar **SUDAH
 diimplementasikan** (2026-06-07); sisa 9.9-9.11 belum.
 
-| #    | Fitur (ex-SCOPTIX)                                        | Status | Modul   | Catatan                                                                                                                                     |
+| #    | Fitur (ex-referensi passive-recon)                                        | Status | Modul   | Catatan                                                                                                                                     |
 | ---- | --------------------------------------------------------- | ------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | 9.1  | Passive subdomain (VirusTotal passive DNS)                | ✅➕   | RE      | Mode scan `passive`/`full`; `runPassiveScan`                                                                                                |
 | 9.2  | Passive archived-URL (Wayback CDX)                        | ✅➕   | RE      | Arsip pasif (1 API call), **bukan** crawler - merevisi 1.9; `matchType=domain` → cakup domain **+ semua subdomain** (VT sudah harvest subs) |

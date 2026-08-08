@@ -1,8 +1,7 @@
-# vacti - Passive Recon & Exposure Discovery (studi SCOPTIX → fitur baru)
+# vacti - Passive Recon & Exposure Discovery
 
-> Hasil mempelajari source **Omnitarium/scoptix** (Apache-2.0, TypeScript/Next.js) -
-> passive reconnaissance & attack-surface tool berbasis **VirusTotal** + **Wayback Machine**.
-> Dokumen ini memetakan fitur scoptix ke modul vacti (mayoritas **VA**, beberapa **CTI**),
+> Desain modul passive reconnaissance & attack-surface vacti berbasis **VirusTotal** + **Wayback Machine**.
+> Dokumen ini memetakan kapabilitas ke modul vacti (mayoritas **VA**, beberapa **CTI**),
 > memutuskan mana yang MASUK / DIADAPTASI / DIBUANG, dan menjaga prinsip ringan vacti
 > (pg-boss, tanpa Redis, tanpa binary berat baru). Semua engine baru = **HTTP API pasif**, bukan
 > scanner aktif - jadi tidak melanggar set tool aktif yang dibekukan (subfinder/httpx/naabu/nuclei).
@@ -13,9 +12,9 @@ backup terlupakan (`backup.7z`), URL reset-password yang masih valid.
 
 ---
 
-## 1. Apa yang scoptix lakukan (ringkas)
+## 1. Apa yang referensi passive-recon lakukan (ringkas)
 
-| Kapabilitas scoptix                         | Sumber data                                             | Inti teknis                                                                                   |
+| Kapabilitas referensi passive-recon                         | Sumber data                                             | Inti teknis                                                                                   |
 | ------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | Asset discovery (subdomain, URL, IP, arsip) | VirusTotal v2 domain report + Wayback CDX               | `subdomains`, `domain_siblings`, `undetected_urls` (+tanggal), passive-DNS `resolutions`      |
 | Passive DNS / IP history                    | VirusTotal resolutions                                  | timeline hostname↔IP per IP; agregasi lintas-scan → temukan **origin di balik WAF**           |
@@ -25,7 +24,7 @@ backup terlupakan (`backup.7z`), URL reset-password yang masih valid.
 | Scan comparison                             | diff antar-scan                                         | subdomain/URL/IP/arsip/finding baru                                                           |
 | Infra                                       | Prisma + Postgres + **Redis/BullMQ** + rotator kunci VT | multi-key VT round-robin + backoff + kuota harian/mingguan/bulanan; export CSV/ZIP            |
 
-Fase pipeline scoptix: `T1_APEX → T2_SUBDOMAINS → T3_WAYBACK_APEX → T4_WAYBACK_SUBDOMAINS →
+Fase pipeline referensi passive-recon: `T1_APEX → T2_SUBDOMAINS → T3_WAYBACK_APEX → T4_WAYBACK_SUBDOMAINS →
 T5_CONSOLIDATE → T6_ANALYSIS`.
 
 ---
@@ -34,7 +33,7 @@ T5_CONSOLIDATE → T6_ANALYSIS`.
 
 Legenda: ✅ MASUK · 🔧 DIADAPTASI (agar ringan) · 🔭 ROADMAP (v-berikutnya) · ❌ TIDAK.
 
-| #   | Fitur scoptix                                  | Modul vacti | Verdict | Catatan kebijakan                                                                         |
+| #   | Fitur referensi passive-recon                                  | Modul vacti | Verdict | Catatan kebijakan                                                                         |
 | --- | ---------------------------------------------- | ----------- | ------- | ----------------------------------------------------------------------------------------- |
 | P1  | Passive subdomain discovery (VirusTotal)       | VA / recon  | ✅      | Sumber OSINT pasif baru; melengkapi subfinder (bukan menggantikan)                        |
 | P2  | Passive archived-URL discovery (Wayback CDX)   | VA / recon  | ✅🔧    | Arsip pasif **bukan crawler** (revisi pengecualian 1.9) - 1 panggilan API, ringan         |
@@ -48,9 +47,9 @@ Legenda: ✅ MASUK · 🔧 DIADAPTASI (agar ringan) · 🔭 ROADMAP (v-berikutny
 | P10 | Scan diff diperluas (finding + IP + arsip)     | VA          | ✅      | vacti sudah punya `diffScans`; tambah dimensi                                             |
 | P11 | Export CSV/ZIP hasil scan                      | VA/UI       | ✅      | Pelengkap report PDF (data mentah untuk analis)                                           |
 | P12 | Dashboard "discovery over time" + by-source    | UI          | 🔭      | Analitik tambahan; setelah model data ada                                                 |
-| P13 | URLScan.io sebagai engine ketiga               | VA/CTI      | 🔭      | Enum sudah ada di scoptix; tambah setelah VT+Wayback stabil                               |
+| P13 | URLScan.io sebagai engine ketiga               | VA/CTI      | 🔭      | Enum sudah ada di referensi passive-recon; tambah setelah VT+Wayback stabil                               |
 | -   | Redis/BullMQ, rotator berbasis Redis           | infra       | ❌      | Bertentangan dgn prinsip ringan → pakai pg-boss + Postgres                                |
-| -   | "No auth / not for production" posture scoptix | -           | ❌      | vacti tetap RBAC + auth (prinsip Security-first)                                          |
+| -   | "No auth / not for production" posture referensi passive-recon | -           | ❌      | vacti tetap RBAC + auth (prinsip Security-first)                                          |
 
 ---
 
@@ -74,7 +73,7 @@ selain `active` (pipeline biner) dan `full` (passive → feed → active).
 
 ### 3.2 Exposure findings - regex secret detection (P4) - `@vacti/recon` (lib pure-TS)
 
-Port langsung ruleset scoptix (`lib/regex-analysis.ts`) sebagai modul TS murni:
+Port langsung ruleset referensi passive-recon (`lib/regex-analysis.ts`) sebagai modul TS murni:
 
 - **Aturan** (type → regex, dgn prefilter keyword untuk kecepatan, prioritas untuk klaim overlap):
   `aws-key`, `gcp-service-account`, `github-token`, `gitlab-token`, `google-api-key`, `openai-key`,
@@ -104,14 +103,14 @@ Port langsung ruleset scoptix (`lib/regex-analysis.ts`) sebagai modul TS murni:
 ### 3.4 Deep-fetch (P7) + SSRF guard - opsional, aman-by-default
 
 - **Opt-in** per scan (dan opsional dibatasi ke kategori tertentu, mis. hanya config/backup).
-- **Wajib** lewat `assertUrlSafeForServerFetch` (port SSRF-guard scoptix): tolak skema non-http(s),
+- **Wajib** lewat `assertUrlSafeForServerFetch` (port SSRF-guard referensi passive-recon): tolak skema non-http(s),
   `localhost`/`.local`/metadata `169.254.169.254`, IPv4/IPv6 privat/reserved.
 - Body di-cap ukuran, disimpan (storage key + content length), lalu dipindai regex (§3.2).
 - Proxy SOCKS opsional (P9). Rate-limit + cancellation mengikuti pipeline (AbortController).
 
 ### 3.5 Rotation/kuota/backoff (P8) - **Postgres, bukan Redis**
 
-scoptix memakai Redis untuk backoff + kuota. vacti mengadaptasi ke Postgres agar tetap 3 service:
+referensi passive-recon memakai Redis untuk backoff + kuota. vacti mengadaptasi ke Postgres agar tetap 3 service:
 
 - `api_keys` (vault) diperluas: `provider`, `usage_count_*` (daily/weekly/monthly + reset key
   tanggal/minggu/bulan), `is_disabled`, `next_available_at` (backoff), `last_used_at`.
@@ -129,7 +128,7 @@ scoptix memakai Redis untuk backoff + kuota. vacti mengadaptasi ke Postgres agar
 
 Mengikuti pola schema vacti (snake_case kolom, uuid id). Ringkas:
 
-- `passive_sources` enum: `virustotal | wayback | urlscan` (sejajar `EngineProvider` scoptix).
+- `passive_sources` enum: `virustotal | wayback | urlscan` (sejajar `EngineProvider` referensi passive-recon).
 - `discovered_urls` (per target): `url_text`, `url_sha256` (unik per target), `sources[]`,
   `pathname_extension`, `extension_category_id`, `external_seen_at`, deep-fetch fields
   (`deep_scan_state`, `fetched_at`, `content_storage_key`, `content_length`).
@@ -138,7 +137,7 @@ Mengikuti pola schema vacti (snake_case kolom, uuid id). Ringkas:
 - `extension_categories` + `extension_suffix_rules` (seed default + editable).
 - `ip_resolutions` (`target_id`, `ip_address`, `latest_resolved_at`, `hostname_count`) +
   `ip_resolution_sightings` (`hostname`, `last_resolved_at`, `scan_id?`).
-- `scan_observed_*` (subdomain/url/ip) untuk snapshot per-scan + diff (mirip pola scoptix).
+- `scan_observed_*` (subdomain/url/ip) untuk snapshot per-scan + diff (mirip pola referensi passive-recon).
 - `api_keys` diperluas untuk rotation/kuota (§3.5).
 
 Semua di-cascade ke `projects`/`targets` (multi-tenant tetap dijaga).
@@ -170,7 +169,7 @@ analysis: kategorisasi ekstensi → regex exposure (URL) → deep-fetch+regex (b
   **dimask di UI** (reveal on-demand, pola `Reveal` yang sudah ada), **CONFIDENTIAL** di report,
   tidak pernah di-log.
 - Deep-fetch **wajib** SSRF-guard + opt-in + cap ukuran + (opsional) proxy. Tanpa guard = tidak boleh.
-- Hanya target yang **diautorisasi** (vacti tetap RBAC + auth - kebalikan posture "no-auth" scoptix).
+- Hanya target yang **diautorisasi** (vacti tetap RBAC + auth - kebalikan posture "no-auth" referensi passive-recon).
 - API key OSINT terenkripsi at-rest (vault yang sudah ada), rotation tidak membocorkan key.
 
 ---
@@ -186,8 +185,8 @@ Semua tetap di tiga service (app + worker + Postgres). Tidak ada Redis, tidak ad
 
 ---
 
-## 8. Lisensi & atribusi
+## 8. Sumber data
 
-scoptix berlisensi **Apache-2.0** - mempelajari ide & mem-port logika pure-TS (mis. ruleset regex,
-SSRF-guard) diperbolehkan dengan atribusi. Cantumkan NOTICE/atribusi bila menyalin file utuh;
-untuk implementasi ulang (clean-room dari spec ini) atribusi metodologi tetap dianjurkan.
+Semua data berasal dari API publik (VirusTotal, Wayback Machine) yang diakses secara pasif, dengan
+atribusi sesuai ketentuan masing-masing layanan. Semua logika (ruleset regex exposure, SSRF-guard) adalah
+implementasi TypeScript murni milik vacti.

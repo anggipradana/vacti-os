@@ -1,7 +1,6 @@
-# Mirrors the ignore globs already declared in .markdownlint-cli2.jsonc's "ignores" array, plus
-# the scratch directories added in Phase 8 of plans/in-progress/ose-parity-repo-operating-system
-# (worktrees/, local-temp/) and Rust build output (target/), none of which markdownlint has ever
-# needed to lint.
+# Mirrors the ignore globs already declared in .markdownlint-cli2.jsonc's "ignores" array, plus the
+# scratch directories (worktrees/, local-temp/) and build output (dist/, target/), none of which
+# markdownlint has ever needed to lint.
 node_modules/
 **/node_modules/
 dist/
