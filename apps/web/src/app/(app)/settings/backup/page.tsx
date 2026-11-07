@@ -382,7 +382,7 @@ export default async function BackupPage({ searchParams }: { searchParams: Promi
               `${s.scriptDir}/restore.sh --verify\n` +
                 `${s.scriptDir}/restore.sh latest --dry-run\n` +
                 `sudo ${s.scriptDir}/restore.sh latest --target /restore --apply\n` +
-                `cd /home/vacti/vacti && docker compose build && docker compose up -d`,
+                `cd /opt/vacti && docker compose build && docker compose up -d`,
             )}
             <p className="mt-2 text-xs text-fg-subtle">
               {tx(locale, 'Full runbook:', 'Runbook lengkap:')} <code>ops/backup/README.md</code>
@@ -404,7 +404,7 @@ export default async function BackupPage({ searchParams }: { searchParams: Promi
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {cmd(`sudo /home/vacti/vacti/ops/backup/install.sh`)}
+          {cmd(`sudo /opt/vacti/ops/backup/install.sh`)}
           <p className="mt-2 text-xs text-fg-subtle">
             {tx(locale, 'Reference:', 'Referensi:')} <code>ops/backup/README.md</code>
           </p>

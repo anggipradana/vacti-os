@@ -72,7 +72,7 @@ DRY-RUN - no changes made. A real restore would:
   1. restic restore $SNAPSHOT --target $TARGET
   2. read $TARGET/var/backups/vacti/MANIFEST-*.txt and clone the source at that git_sha
   3. extract $TARGET/var/backups/vacti/secrets-*.tar to /   (.env, backup.env)
-  4. copy $TARGET/home/vacti/vacti/.data into place, chown 10001
+  4. copy $TARGET${VACTI_DIR:-/opt/vacti}/.data into place, chown 10001
   5. docker compose up -d db; wait healthy; pg_restore the newest vacti-db-*.dump into a clean db
   6. docker compose build && up -d
 Run without --dry-run to fetch, and add --apply to reconstruct the live system.

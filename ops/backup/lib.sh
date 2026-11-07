@@ -3,7 +3,7 @@
 # No secrets live here; the real credentials are in /etc/vacti/backup.env (mode 600, gitignored).
 
 # --- Tunables (override via environment before sourcing) ---------------------
-VACTI_DIR="${VACTI_DIR:-/home/vacti/vacti}"
+VACTI_DIR="${VACTI_DIR:-/opt/vacti}"
 COMPOSE_MAIN="${COMPOSE_MAIN:-$VACTI_DIR/docker-compose.yml}"
 VACTI_PROJECT="${VACTI_PROJECT:-vacti}"
 BACKUP_ENV="${BACKUP_ENV:-/etc/vacti/backup.env}"

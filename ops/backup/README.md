@@ -23,7 +23,7 @@ restore.
 - Postgres: logical `pg_dump -Fc` of the `vacti` DB (custom format, zero-downtime MVCC snapshot) plus
   `pg_dumpall --globals-only` for roles. Integrity-gated with `pg_restore -l` before it ships.
 - `.data` bind mount: any persisted app data (e.g. report artifacts).
-- Secrets/config, tar'd with paths from `/`: `/home/vacti/vacti/.env` (holds `ENCRYPTION_KEY` +
+- Secrets/config, tar'd with paths from `/`: `${VACTI_DIR:-/opt/vacti}/.env` (holds `ENCRYPTION_KEY` +
   `POSTGRES_PASSWORD`) and `/etc/vacti/backup.env`.
 - A version `MANIFEST` (git remote/SHA/branch, app image, restic version).
 
@@ -45,7 +45,7 @@ are required. Guard the restic password accordingly.
    R2 keys. (For R2/S3 instead: a separate bucket + a scoped token; set the `s3:` repo + AWS_* vars.)
 3. On the box, install and seed config:
    ```bash
-   sudo /home/vacti/vacti/ops/backup/install.sh
+   sudo ${VACTI_DIR:-/opt/vacti}/ops/backup/install.sh
    ```
    This installs restic + the scripts to `/opt/vacti-backup`, installs the timers, and writes
    `/etc/vacti/backup.env` from the example (mode 600) if absent. It will NOT enable the timer yet.
@@ -82,7 +82,7 @@ Carry off-box (password manager): the contents of `/etc/vacti/backup.env`.
 # 3. Reconstruct the live system automatically (DB + .data + config):
 sudo /opt/vacti-backup/restore.sh latest --target /restore --apply
 #    then finish, as the script prints:
-cd /home/vacti/vacti
+cd ${VACTI_DIR:-/opt/vacti}
 docker compose build && docker compose up -d
 ```
 
